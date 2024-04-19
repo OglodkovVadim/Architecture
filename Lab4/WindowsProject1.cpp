@@ -6,30 +6,23 @@
 int imageWidth;
 int imageHeight;
 
-// Прототип функции отображения изображения и бокса
 void DisplayImageAndBox(HDC hdc, const wchar_t* imagePath, int imageWidth, int imageHeight);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 std::string GetLastErrorAsString()
 {
-    //Get the error message ID, if any.
     DWORD errorMessageID = ::GetLastError();
     if (errorMessageID == 0) {
-        return std::string(); //No error message has been recorded
+        return std::string();
     }
 
     LPSTR messageBuffer = nullptr;
-
-    //Ask Win32 to give us the string version of that message ID.
-    //The parameters we pass in, tell Win32 to create the buffer that holds the message for us (because we don't yet know how long the message string will be).
     size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
 
-    //Copy the error message into a std::string.
     std::string message(messageBuffer, size);
 
-    //Free the Win32's string's buffer.
     LocalFree(messageBuffer);
 
     return message;
@@ -50,19 +43,17 @@ public:
     }
 
     void DisplayBox(HDC hdc, int x, int y) {
-        HPEN hPen = CreatePen(PS_SOLID, 2, RGB(0, 0, 0)); // Создание пера для рисования бокса
+        HPEN hPen = CreatePen(PS_SOLID, 2, RGB(0, 0, 0)); 
         SelectObject(hdc, hPen);
-        Rectangle(hdc, x, y, imageWidth + x, imageHeight + y); // Рисование бокса
+        Rectangle(hdc, x, y, imageWidth + x, imageHeight + y);
         DeleteObject(hPen);
     }
 
     void DisplayImage(HDC hdc, const wchar_t* imagePath, int x, int y)
     {
-        // Создание контекста устройства для отображения изображения
         HDC hdcMem = CreateCompatibleDC(hdc);
         SelectObject(hdcMem, hBitmap);
 
-        // Отображение изображения на экране
         BitBlt(hdc, x, y, imageWidth, imageHeight, hdcMem, 0, 0, SRCCOPY);
 
         DeleteDC(hdcMem);
@@ -115,7 +106,7 @@ private:
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    // Регистрация класса окна
+
     WNDCLASS wc = {};
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
@@ -124,7 +115,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     RegisterClass(&wc);
 
-    // Создание окна
     HWND hwnd = CreateWindowEx(0, TEXT("MyWindowClass"), TEXT("Простой графический редактор"),
         WS_VISIBLE | WS_OVERLAPPEDWINDOW, 100, 100, main_window_width, main_window_height,
         NULL, NULL, hInstance, NULL);
