@@ -3,6 +3,14 @@
 #include <string>
 
 
+bool random()
+{
+	if (rand() % 2 == 1)
+		return true;
+	return false;
+}
+
+
 class IObserver
 {
 public:
@@ -31,8 +39,8 @@ public:
 	void detach(IObserver* observer) {
 		observers.erase(
 			std::find(
-				observers.begin(), 
-				observers.end(), 
+				observers.begin(),
+				observers.end(),
 				observer
 			)
 		);
@@ -56,7 +64,7 @@ class Decanat : public IObserver, public ISubject
 {
 public:
 	void update() {
-		if (rand() % 2 == 1)
+		if (random())
 			notify();
 	}
 
